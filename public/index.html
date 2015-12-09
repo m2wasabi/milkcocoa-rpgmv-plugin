@@ -6,13 +6,49 @@
     <title>milkcocoa message sender</title>
   </head>
   <body>
-    <div><label>send message
+    <p><label>send message
         <input type="text" id="send" />
-    </label></div>
+    </label>
+    with Face type
+    <select id="faceName">
+    <option value="" selected="selected">---</option>
+    <option value="Actor1">Actor1</option>
+    <option value="Actor2">Actor2</option>
+    <option value="Actor3">Actor3</option>
+    <option value="Evil">Evil</option>
+    <option value="Monster">Monster</option>
+    <option value="Nature">Nature</option>
+    <option value="People1">People1</option>
+    <option value="People2">People2</option>
+    <option value="People3">People3</option>
+    <option value="People4">People4</option>
+    </select>：
+    <select id="faceIndex">
+    <option value="0" selected="selected">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    </select>
+    </p>
 
-    <div><label>event wtitch
-        <button id="switch">Switch</button>
-    </label></div>
+    <p><label>event swtitch [10]
+        <button id="switchOn">On</button>
+        <button id="switchOff">Off</button>
+    </label></p>
+
+    <p><label>event variable [11]
+        <button id="setVar">=10</button>
+        <button id="addVar">+1</button>
+        <button id="subVar">-1</button>
+        <button id="mulVar">*2</button>
+        <button id="divVar">/2</button>
+        <button id="remVar">%10</button>
+    </label></p>
 
     <script src="https://cdn.mlkcca.com/v2.0.0/milkcocoa.js"></script>
     <script src="index.js"></script>
