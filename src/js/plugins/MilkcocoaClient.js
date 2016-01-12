@@ -47,7 +47,7 @@
   var useSync = Number(parameters['useSync']);
   var clientId = '';
   var onlinePlayers = {};
-  var templateEventData = {"id":0,"name":"Default","note":"","pages":[{"conditions":{"actorId":1,"actorValid":false,"itemId":1,"itemValid":false,"selfSwitchCh":"A","selfSwitchValid":false,"switch1Id":1,"switch1Valid":false,"switch2Id":1,"switch2Valid":false,"variableId":1,"variableValid":false,"variableValue":0},"directionFix":false,"image":{"tileId":0,"characterName":"Actor1","direction":2,"pattern":0,"characterIndex":0},"list":[{"code":0,"indent":0,"parameters":[]}],"moveFrequency":3,"moveRoute":{"list":[{"code":0,"parameters":[]}],"repeat":true,"skippable":false,"wait":false},"moveSpeed":4,"moveType":0,"priorityType":1,"stepAnime":true,"through":true,"trigger":4,"walkAnime":true}],"x":0,"y":0};
+  var templateEventData = {"id":0,"name":"Default","note":"","pages":[{"conditions":{"actorId":1,"actorValid":false,"itemId":1,"itemValid":false,"selfSwitchCh":"A","selfSwitchValid":false,"switch1Id":1,"switch1Valid":false,"switch2Id":1,"switch2Valid":false,"variableId":1,"variableValid":false,"variableValue":0},"directionFix":false,"image":{"tileId":0,"characterName":"Actor1","direction":2,"pattern":0,"characterIndex":0},"list":[{"code":0,"indent":0,"parameters":[]}],"moveFrequency":3,"moveRoute":{"list":[{"code":0,"parameters":[]}],"repeat":true,"skippable":false,"wait":false},"moveSpeed":5,"moveType":0,"priorityType":1,"stepAnime":true,"through":true,"trigger":4,"walkAnime":true}],"x":0,"y":0};
 
   var milkcocoa = new MilkCocoa(appId + '.mlkcca.com');
   clientId = milkcocoa.option.clientId;
