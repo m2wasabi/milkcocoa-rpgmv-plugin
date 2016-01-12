@@ -128,12 +128,28 @@
 
           }else{
             // Move event
-            var direction = onlinePlayers[clientId].findDirectionTo(Number(data.value.move.x), Number(data.value.move.y));
-            if (direction > 0) {
-              onlinePlayers[clientId]._characterName = _actor.characterName;
-              onlinePlayers[clientId]._characterIndex = _actor.characterIndex;
-              onlinePlayers[clientId].moveStraight(direction);
+            var _moveRoute = {"list":[],"repeat":false,"skippable":true,"wait":false};
+            var moveX = data.value.move.x - onlinePlayers[clientId].x;
+            var moveY = data.value.move.y - onlinePlayers[clientId].y;
+            if(moveX != 0){
+              var _directionX = (moveX < 0)?Game_Character.ROUTE_MOVE_LEFT:Game_Character.ROUTE_MOVE_RIGHT;
+              var _loop = Math.abs(moveX);
+              for(var _i =0; _i<_loop;_i++){
+                _moveRoute.list.push({"code":_directionX,"parameters":[]});
+              }
             }
+            if(moveY != 0){
+              var _directionY = (moveY < 0)?Game_Character.ROUTE_MOVE_UP:Game_Character.ROUTE_MOVE_DOWN;
+              var _loop = Math.abs(moveY);
+              for(var _i =0; _i<_loop;_i++){
+                _moveRoute.list.push({"code":_directionY,"parameters":[]});
+              }
+            }
+            var route_turn_codes = {2:Game_Character.ROUTE_TURN_DOWN,4:Game_Character.ROUTE_TURN_LEFT,6:Game_Character.ROUTE_TURN_RIGHT,8:Game_Character.ROUTE_TURN_UP};
+            var _turn = route_turn_codes[data.value.move.direction];
+            _moveRoute.list.push({"code":_turn,"parameters":[]});
+            _moveRoute.list.push({"code":0,"parameters":[]});
+            onlinePlayers[clientId].forceMoveRoute(_moveRoute);
           }
         }
       }
