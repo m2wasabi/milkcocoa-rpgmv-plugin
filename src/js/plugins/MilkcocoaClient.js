@@ -219,6 +219,11 @@
     if(sendPosition){
       milkcocoaConsole.sendPlayerPos(2);
       onlinePlayers = {};
+      for(var i in $dataMap.events ){
+        if($dataMap.events[i] !== null && $dataMap.events[i].name == 'MilkcocoaAvatarTemplate'){
+          templateEventData = $dataMap.events[i];
+        }
+      }
     }
   };
 
