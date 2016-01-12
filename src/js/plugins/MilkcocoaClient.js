@@ -222,4 +222,22 @@
     }
   };
 
+  // Load実行時に座標を送る Scene_Load.prototype.onLoadSuccess
+  var _Scene_Load_prototype_onLoadSuccess = Scene_Load.prototype.onLoadSuccess;
+  Scene_Load.prototype.onLoadSuccess = function(){
+    _Scene_Load_prototype_onLoadSuccess.call(this);
+    if(sendPosition){
+      milkcocoaConsole.sendPlayerPos(2);
+      onlinePlayers = {};
+    }
+    // 保存された他プレイヤーアバターを削除
+    for(var i in $gameMap._events ) {
+      if($gameMap._events[i] !== null &&  $gameMap._events[i].hasOwnProperty('clientId')){
+        $gameMap._events[i]._characterName = '';
+        $gameMap._events[i]._characterIndex = 0;
+        $gameSystem.removeCustomEvent(Number($gameMap.mapId()),i) ;
+      }
+    }
+  }
+
 })();
