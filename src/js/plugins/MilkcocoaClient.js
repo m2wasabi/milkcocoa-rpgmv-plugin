@@ -127,6 +127,9 @@
             onlinePlayers[data.value.sender] = gameEvent;
 
           }else{
+            // Avatar Change
+            onlinePlayers[data.value.sender]._characterName = _actor.characterName;
+            onlinePlayers[data.value.sender]._characterIndex = _actor.characterIndex;
             // Move event
             var _moveRoute = {"list":[],"repeat":false,"skippable":true,"wait":false};
             var moveX = data.value.move.x - onlinePlayers[data.value.sender].x;
