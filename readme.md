@@ -10,6 +10,9 @@ RPGツクールMVでMilkcocoaを使ってリアルタイム通信をするため
 + ネットワーク越しに台詞を送る
 
 ## 更新履歴
+2016/01/19 (0.1.2)
++ 複数アバターを識別できない不具合を修正
+
 2016/01/12 (0.1.1)
 + 大きく移動する場合、データロードする場合に、アバターが同期されない不具合の修正
 + アバター用のテンプレートを作成可能にした
@@ -35,9 +38,9 @@ RPGツクールMVでMilkcocoaを使ってリアルタイム通信をするため
 ### 2.1. milkcocoa.js の入手
 MilkcocoaのCDNから、JavaScriptをダウンロードしてきます。
 以下のリンクから「リンク先を保存」またはCliからwgetなどでダウンロードします。  
-設置先 [ProjectROOT]/js/plugins/  
 https://cdn.mlkcca.com/v2.0.0/milkcocoa.js
 
+設置先 [ProjectROOT]/js/plugins/  
 プロジェクトのフォルダ内の`plugins`ディレクトリに`milkcocoa.js`を設置します。
 > `js/plugins/milkcocoa.js`
 
@@ -47,7 +50,7 @@ https://cdn.mlkcca.com/v2.0.0/milkcocoa.js
 http://download.hudell.com/OrangeCustomEvents.js
 
 配布元：
-http://forums.rpgmakerweb.com/index.php?/topic/46527-orange-custom-events/
+http://forums.rpgmakerweb.com/index.php?/topic/46527-orange-custom-events/  
 参考：
 http://qiita.com/kyubuns/items/4108221a8b8245e46d27
 
