@@ -102,16 +102,16 @@
       if(typeof($gameMap.addEvent) !== 'undefined'){
         if(data.value.move.mapId !== Number($gameMap.mapId())){
           // 既に登録したキャラが別のマップに移動した場合にキャラを消す
-          if(typeof(onlinePlayers[clientId]) !== 'undefined'){
-            onlinePlayers[clientId]._characterName = '';
-            onlinePlayers[clientId]._characterIndex = 0;
-            var _eventId = onlinePlayers[clientId]._eventId;
-            delete onlinePlayers[clientId];
+          if(typeof(onlinePlayers[data.value.sender]) !== 'undefined'){
+            onlinePlayers[data.value.sender]._characterName = '';
+            onlinePlayers[data.value.sender]._characterIndex = 0;
+            var _eventId = onlinePlayers[data.value.sender]._eventId;
+            delete onlinePlayers[data.value.sender];
             $gameSystem.removeCustomEvent(Number($gameMap.mapId()),_eventId) ;
           }
         }else{
           var _actor = $dataActors[data.value.move.actorId];
-          if(typeof(onlinePlayers[clientId]) == 'undefined'){
+          if(typeof(onlinePlayers[data.value.sender]) == 'undefined'){
             // Add event
             var _event_length = $dataMap.events.length;
             var _tempEvendData = templateEventData;
@@ -123,14 +123,14 @@
             _tempEvendData.y = Number(data.value.move.y);
 
             var gameEvent = $gameMap.addEvent(_tempEvendData,true);
-            gameEvent.clientId = clientId;
-            onlinePlayers[clientId] = gameEvent;
+            gameEvent.clientId = data.value.sender;
+            onlinePlayers[data.value.sender] = gameEvent;
 
           }else{
             // Move event
             var _moveRoute = {"list":[],"repeat":false,"skippable":true,"wait":false};
-            var moveX = data.value.move.x - onlinePlayers[clientId].x;
-            var moveY = data.value.move.y - onlinePlayers[clientId].y;
+            var moveX = data.value.move.x - onlinePlayers[data.value.sender].x;
+            var moveY = data.value.move.y - onlinePlayers[data.value.sender].y;
             if(moveX != 0){
               var _directionX = (moveX < 0)?Game_Character.ROUTE_MOVE_LEFT:Game_Character.ROUTE_MOVE_RIGHT;
               var _loop = Math.abs(moveX);
@@ -149,7 +149,7 @@
             var _turn = route_turn_codes[data.value.move.direction];
             _moveRoute.list.push({"code":_turn,"parameters":[]});
             _moveRoute.list.push({"code":0,"parameters":[]});
-            onlinePlayers[clientId].forceMoveRoute(_moveRoute);
+            onlinePlayers[data.value.sender].forceMoveRoute(_moveRoute);
           }
         }
       }
