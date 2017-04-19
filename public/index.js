@@ -16,10 +16,20 @@
   var mulVar = document.getElementById("mulVar");
   var divVar = document.getElementById("divVar");
   var remVar = document.getElementById("remVar");
+  var staticSwitchOnInput = document.getElementById("staticSwitchOn");
+  var staticSwitchOffInput = document.getElementById("staticSwitchOff");
+  var staticSetVar0 = document.getElementById("staticSetVar0");
+  var staticSetVar333 = document.getElementById("staticSetVar333");
+  var staticReset = document.getElementById("staticReset");
+
+  var staticData = {sw: [], val:[] };
 
   // dosplay send data
   ds.on("send", function(data){
     console.log(data);
+  });
+  ds.on("push", function(data){
+      console.log(data);
   });
 
   // events
@@ -57,5 +67,25 @@
   });
   remVar.addEventListener("click", function(e){
     ds.send({var: {id: 11, action: 'rem', value: 10}});
+  });
+  staticSwitchOnInput.addEventListener("click", function(e){
+    staticData.sw[10] = 1;
+    ds.push({staticData: staticData });
+  });
+  staticSwitchOffInput.addEventListener("click", function(e){
+    staticData.sw[10] = 0;
+    ds.push({staticData: staticData });
+  });
+  staticSetVar0.addEventListener("click", function(e){
+    staticData.val[11] = 0;
+    ds.push({staticData: staticData });
+  });
+  staticSetVar333.addEventListener("click", function(e){
+    staticData.val[11] = 333;
+    ds.push({staticData: staticData });
+  });
+  staticReset.addEventListener("click", function(e){
+      staticData = {sw: [], val:[] };
+      ds.push({staticData: staticData });
   });
 }());
