@@ -30,11 +30,22 @@
  *   Milkcocoa var 11 rem 3     # Milkcocoaで変数 0011 の現在値に 3で割った余りを代入する
  *   Milkcocoa message 'text'   # Milkcocoaでメッセージを送信する
  *   Milkcocoa message 'text' 'People4' 1 # Milkcocoaで顔アイコンを表示してメッセージを送信する
+ *   Milkcocoa staticSwitch 10 1 # Milkcocoaで永続スイッチ 0010 に 1を送信する
+ *   Milkcocoa staticVar 11 3   # Milkcocoaで永続変数 0011 に 3を送信する
+ *   Milkcocoa staticReset      # Milkcocoaで永続スイッチ・変数をリセットする
  *
  * sendPosition = 1 の時に、OrangeCustomEvents プラグインが有効の場合、
  * 同時接続中のキャラが見えます。
  *   http://download.hudell.com/OrangeCustomEvents.js
  *
+ * staticVarについて:
+ * 非同期通信のため、四則演算は行いません。
+ * 永続スイッチ、永続変数は変化があるたびに全ての永続スイッチ、永続変数を上書きします。
+ *
+ * staticResetについて:
+ * リセットされると、永続スイッチのロックが解除されます。
+ * 現在のスイッチ・変数の状態は変化しません。
+ * 間違って永続化した、永続化したくなくなった時にこれで外します。
  *
  */
 
@@ -48,12 +59,15 @@
   var clientId = '';
   var onlinePlayers = {};
   var templateEventData = {"id":0,"name":"Default","note":"","pages":[{"conditions":{"actorId":1,"actorValid":false,"itemId":1,"itemValid":false,"selfSwitchCh":"A","selfSwitchValid":false,"switch1Id":1,"switch1Valid":false,"switch2Id":1,"switch2Valid":false,"variableId":1,"variableValid":false,"variableValue":0},"directionFix":false,"image":{"tileId":0,"characterName":"Actor1","direction":2,"pattern":0,"characterIndex":0},"list":[{"code":0,"indent":0,"parameters":[]}],"moveFrequency":3,"moveRoute":{"list":[{"code":0,"parameters":[]}],"repeat":true,"skippable":false,"wait":false},"moveSpeed":5,"moveType":0,"priorityType":1,"stepAnime":true,"through":true,"trigger":4,"walkAnime":true}],"x":0,"y":0};
+  var staticData = {"sw":[], "val":[]};
 
   var milkcocoa = new MilkCocoa(appId + '.mlkcca.com');
   clientId = milkcocoa.option.clientId;
 
   var ds = milkcocoa.dataStore(dataPath);
-  ds.on('send',function(data){
+
+  // インスタントデータ受信時
+  ds.on('send', function(data){
     if(data.value.message){
       if(data.value.message.faceName){
         $gameMessage.setFaceImage(data.value.message.faceName,data.value.message.faceIndex);
@@ -111,7 +125,7 @@
           }
         }else{
           var _actor = $dataActors[data.value.move.actorId];
-          if(typeof(onlinePlayers[data.value.sender]) == 'undefined'){
+          if(typeof(onlinePlayers[data.value.sender]) === 'undefined'){
             // Add event
             var _event_length = $dataMap.events.length;
             var _tempEvendData = templateEventData;
@@ -159,6 +173,65 @@
     }
   });
 
+  // 永続データのマージ処理
+  var mergeStaticData = function (data) {
+    if (!data) {
+        data = {"sw":[],"val":[]};
+    }
+    if(data.sw) {
+      for(var _sk in data.sw) {
+        if(typeof(data.sw[_sk]) !== 'undefined' && data.sw[_sk] !== null) {
+          staticData.sw[_sk] = data.sw[_sk];
+        }
+      }
+    }
+    if(data.val) {
+      for(var _vk in data.val) {
+        if(typeof(data.val[_vk]) !== 'undefined' && data.val[_vk] !== null) {
+          staticData.val[_vk] = data.val[_vk];
+        }
+      }
+    }
+  };
+
+  // 永続データの反映処理
+  var syncStaticData = function () {
+    for(var _sk in staticData.sw) {
+      var _s = staticData.sw[_sk];
+      if(_sk !== null && _s !== null){
+        $gameSwitches.setValue(_sk,_s);
+      }
+    }
+    for(var _vk in staticData.val) {
+      var _v = staticData.val[_vk];
+      if(_vk !== null && _v !== null){
+        $gameVariables.setValue(_vk,_v);
+      }
+    }
+  };
+
+  // 永続データ受信時
+  ds.on('push', function(data){
+    if(typeof(data.value.staticData) !== 'undefined'){
+      mergeStaticData(data.value.staticData);
+      syncStaticData();
+    }
+  });
+
+  // 永続データ取得からの同期
+  var staticDataSync = function () {
+    ds.stream().size(1).next(function (err, data) {
+      if(err === null) {
+        for(var _i in data) {
+          if(typeof(data[_i]) !== 'undefined' && typeof(data[_i].value) !== 'undefined' && typeof(data[_i].value.staticData) !== 'undefined'){
+            mergeStaticData(data[_i].value.staticData);
+          }
+        }
+        syncStaticData();
+      }
+    });
+  };
+
   var milkcocoaConsole = {};
   // スイッチの変更
   milkcocoaConsole.sendSwitch = function(args){
@@ -185,7 +258,25 @@
     ds.send({'sender':clientId,'move':{'mapId':Number($gameMap.mapId()),'x':Number($gamePlayer.x),'y':Number($gamePlayer.y),'direction':direction,'actorId':$gameParty._actors[0]}});
   };
 
-  // Commands
+  // 永続スイッチの変更
+  milkcocoaConsole.pushSwitch = function(args){
+    staticData.sw[Number(args[1])] = Number(args[2]);
+    ds.push({'sender':clientId,'staticData':staticData});
+  };
+
+  // 永続変数の変更
+  milkcocoaConsole.pushVar = function(args){
+    staticData.val[Number(args[1])] = Number(args[2]);
+    ds.push({'sender':clientId,'staticData':staticData});
+  };
+
+  // 永続パラメータ・変数のリセット
+  milkcocoaConsole.pushReset = function(){
+    staticData = {"sw":[], "val":[]};
+    ds.push({'sender':clientId,'staticData':staticData});
+  };
+
+    // Commands
   var _Game_Interpreter_pluginCommand =
     Game_Interpreter.prototype.pluginCommand;
   Game_Interpreter.prototype.pluginCommand = function(command, args) {
@@ -201,6 +292,15 @@
           break;
         case 'message':
           milkcocoaConsole.sendMessage(args);
+          break;
+        case 'staticSwitch':
+          milkcocoaConsole.pushSwitch(args);
+          break;
+        case 'staticVar':
+          milkcocoaConsole.pushVar(args);
+          break;
+        case 'staticReset':
+          milkcocoaConsole.pushReset(args);
           break;
       }
     }
@@ -246,6 +346,15 @@
         $gameSystem.removeCustomEvent(Number($gameMap.mapId()),i) ;
       }
     }
-  }
+    // 永続データの同期
+    staticDataSync();
+  };
 
+  // ニューゲーム時に永続データを同期する
+  var _DataManager_selectSavefileForNewGame = DataManager.selectSavefileForNewGame;
+  DataManager.selectSavefileForNewGame = function(){
+    _DataManager_selectSavefileForNewGame.call(this);
+    // 永続データの同期
+    staticDataSync();
+  };
 })();
