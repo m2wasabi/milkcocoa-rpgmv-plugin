@@ -212,6 +212,9 @@
 
   // 永続データ受信時
   ds.on('push', function(data){
+    if(data.value.command === 'reset'){
+      staticData = {"sw":[], "val":[]};
+    }
     if(typeof(data.value.staticData) !== 'undefined'){
       mergeStaticData(data.value.staticData);
       syncStaticData();
@@ -273,7 +276,7 @@
   // 永続パラメータ・変数のリセット
   milkcocoaConsole.pushReset = function(){
     staticData = {"sw":[], "val":[]};
-    ds.push({'sender':clientId,'staticData':staticData});
+    ds.push({'sender':clientId,'staticData':staticData, command: 'reset'});
   };
 
     // Commands

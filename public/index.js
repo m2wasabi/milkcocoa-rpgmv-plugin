@@ -85,7 +85,7 @@
     ds.push({staticData: staticData });
   });
   staticReset.addEventListener("click", function(e){
-      staticData = {sw: [], val:[] };
-      ds.push({staticData: staticData });
+    staticData = {sw: [], val:[] };
+    ds.push({staticData: staticData, command: 'reset' });
   });
 }());

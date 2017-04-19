@@ -10,6 +10,9 @@ RPGツクールMVでMilkcocoaを使ってリアルタイム通信をするため
 + ネットワーク越しに台詞を送る
 
 ## 更新履歴
+2017/04/20 (0.2.0)
++ 永続データの送信コマンドを追加
+
 2016/01/19 (0.1.2)
 + 複数アバターを識別できない不具合を修正
 
@@ -112,7 +115,21 @@ RPGツクール側で、Milkcocoaのプラグインを使用します。
 
 ![変数](https://qiita-image-store.s3.amazonaws.com/0/35009/60878149-5a9f-09ac-1e4f-dff48c17cfdb.png)
 
-### 4.3. メッセージの送信
+### 4.3. 永続スイッチ・変数の操作(New!)
+
+| Command | Description |
+|----|-----|
+|Milkcocoa staticSwitch 10 1 | Milkcocoaで永続スイッチ 0010 に 1を送信する|
+|Milkcocoa staticVar 11 3 | Milkcocoaで永続変数 0011 に 3を送信する|
+|Milkcocoa staticReset | Milkcocoaで永続スイッチ・変数をリセットする|
+
+データを永続化して送信します。
+通信のデータ量が増えるので使いどころに注意しましょう。
+1回のMilkcocoaの送信データが4kbまでなので、フラグが数千とかになると保存されないかもしれないです。
+永続化データの取得タイミングは、ニューゲーム時、セーブデータ読み込み時です。  
+リセットすると、サーバ側の永続化されたデータを手放します。各プレイヤーで保持されているフラグ情報はそのままです。
+
+### 4.4. メッセージの送信
 
 | Command | Description |
 |----|-----|
@@ -121,7 +138,7 @@ RPGツクール側で、Milkcocoaのプラグインを使用します。
 
 ![screen005.PNG](https://qiita-image-store.s3.amazonaws.com/0/35009/7a3f1122-c1d7-311b-eebc-27430360a56c.png)
 
-### 4.4. Avatar template
+### 4.5. Avatar template
 各マップのイベントで「MilkcocoaAvatarTemplate」と名前を付けたイベントを作ると、
 Milkcocoaプラグインは、他のプレイヤーのアバターを、そのイベントの複製として生成します。
 ![screen006.PNG](https://qiita-image-store.s3.amazonaws.com/0/35009/95396229-ac66-997b-74c5-617fb6314830.png)
